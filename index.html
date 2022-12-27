@@ -46,11 +46,27 @@
                 const currentBalance = await contract.balanceOf(address);
                 $("#output").html("Current balance: " + ethers.utils.formatUnits(currentBalance, 2) + " MNI");
             }
+
+            async function transferToAccount() {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const accounts = await provider.send("eth_requestAccounts", []);
+                const signer = provider.getSigner();
+                const contract = getMNIContract(signer);
+
+                try {
+                    await contract.transfer("0x15433DA387451F9dE4565280C85506CB71aF9376", 1000);
+                    $("#output").html("Successfully transfered 10 MNI to 0x15433DA387451F9dE4565280C85506CB71aF9376");
+                } catch (error) {
+                    $("#output").html("Error during transfer: " + error.message);
+                    console.log(error);
+                }
+            }
         </script>
     </head>
     <body>
         <label id="output"></label> <br/>
         <button onclick="getBlockHeight()">Get current block height</button><br/>
         <button onclick="getBalance()">Get balance</button><br/>
+        <button onclick="transferToAccount()">Transfer 10 MNI</button><br/>
     </body>
 </html>
