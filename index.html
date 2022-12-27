@@ -1,9 +1,23 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Mani7K - Github</title>
+    <head> 
+        <title> Mani7K - Github </title>
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        <script> 
+            async function getBlockHeight() {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                console.log(provider);
+                const network = await provider.getNetwork();
+                const blockNumber = await provider.getBlockNumber();
+
+                $("#blockHeight").html("Current " + network.name + " block height: " + blockNumber);
+            }
+        </script>
     </head>
     <body>
-        <p>Hello world</p>
+        <label id="blockHeight"></label>
+        <br/>
+        <button onclick="getBlockHeight()">Get current block height</button>
     </body>
 </html>
