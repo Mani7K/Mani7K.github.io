@@ -11,13 +11,46 @@
                 const network = await provider.getNetwork();
                 const blockNumber = await provider.getBlockNumber();
 
-                $("#blockHeight").html("Current " + network.name + " block height: " + blockNumber);
+                $("#output").html("Current " + network.name + " block height: " + blockNumber);
+            }
+
+            function getMNIContract(signerOrProvider) {
+                const contractAddress = "0xB5886CC0eE1cD612542b4272EBCb998D1C226106";
+                const abi = [
+                    "function allowance ( address owner, address spender ) external view returns ( uint256 )",
+                    "function approve ( address spender, uint256 amount ) external returns ( bool )",
+                    "function balanceOf ( address account ) external view returns ( uint256 )",
+                    "function decimals (  ) external view returns ( uint8 )",
+                    "function decreaseAllowance ( address spender, uint256 subtractedValue ) external returns ( bool )",
+                    "function increaseAllowance ( address spender, uint256 addedValue ) external returns ( bool )",
+                    "function name (  ) external view returns ( string )",
+                    "function symbol (  ) external view returns ( string )",
+                    "function totalSupply (  ) external view returns ( uint256 )",
+                    "function transfer ( address to, uint256 amount ) external returns ( bool )",
+                    "function transferFrom ( address from, address to, uint256 amount ) external returns ( bool )",
+                    "function updateWhitelist ( address account, bool whitelisted ) external",
+                    "function whitelist ( address ) external view returns ( bool )"
+                ];
+                let contract = new ethers.Contract(contractAddress, abi, signerOrProvider);
+
+                return contract;
+            }
+
+            async function getBalance() {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const accounts = await provider.send("eth_requestAccounts", []);
+                const signer = provider.getSigner();
+                const address = await signer.getAddress();
+                const contract = getMNIContract(provider);
+
+                const currentBalance = await contract.balanceOf(address);
+                $("#output").html("Current balance: " + ethers.utils.formatUnits(currentBalance, 2) + " MNI");
             }
         </script>
     </head>
     <body>
-        <label id="blockHeight"></label>
-        <br/>
-        <button onclick="getBlockHeight()">Get current block height</button>
+        <label id="output"></label> <br/>
+        <button onclick="getBlockHeight()">Get current block height</button><br/>
+        <button onclick="getBalance()">Get balance</button><br/>
     </body>
 </html>
